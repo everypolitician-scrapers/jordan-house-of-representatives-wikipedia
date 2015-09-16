@@ -62,6 +62,7 @@ def scrape_list(url)
           term: '2013',
           source: url
         })
+        entry[:party] = 'Independent' if entry[:party].to_s.empty?
         ScraperWiki.save_sqlite([:name, :area, :type], entry)
       end
 
