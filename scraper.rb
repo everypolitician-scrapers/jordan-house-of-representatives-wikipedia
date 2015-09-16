@@ -71,22 +71,4 @@ def scrape_list(url)
   end
 end
 
-def scrape_person(url)
-  noko = noko_for(url)
-  binding.pry
-
-# Members
-  data = { 
-    id: "%s-%s" % [name.downcase.gsub(/[[:space:]]+/,'-'), first_seen],
-    name: name,
-    party: tds[2].text.tidy,
-    image: tds[1].css('img/@src').text,
-    term: term[:id],
-    notes: notes,
-    source: url.to_s,
-  }
-  data[:image] = URI.join(url, data[:image]).to_s unless data[:image].to_s.empty?
-  ScraperWiki.save_sqlite([:id, :term], data)
-end
-
 scrape_list('https://en.wikipedia.org/wiki/Jordanian_parliamentary_election_results,_2013')
