@@ -1,5 +1,6 @@
 #!/bin/env ruby
 # encoding: utf-8
+# frozen_string_literal: true
 
 require 'nokogiri'
 require 'pry'
@@ -10,7 +11,7 @@ OpenURI::Cache.cache_path = '.cache'
 
 class String
   def tidy
-    self.gsub(/[[:space:]]+/, ' ').strip
+    gsub(/[[:space:]]+/, ' ').strip
   end
 end
 
@@ -30,45 +31,41 @@ def scrape_list(url)
       data = table.xpath('.//tr[td]').map do |tr|
         tds = tr.css('td')
         if area.include? 'Quota'
-          { 
-            name: tds[0].text.tidy,
+          {
+            name:     tds[0].text.tidy,
             wikiname: tds[0].xpath('.//a[not(@class="new")]/@title').text,
-            area: tds[3].text.tidy,
-            party: tds[1].text.tidy,
-            type: 'Woman',
+            area:     tds[3].text.tidy,
+            party:    tds[1].text.tidy,
+            type:     'Woman',
           }
         elsif area == 'National List'
-          tds[2].text.split(/,\s*/).map { |name|
-            { 
-              name: name,
-              area: 'National List',
-              type: 'National List',
+          tds[2].text.split(/,\s*/).map do |name|
+            {
+              name:  name,
+              area:  'National List',
+              type:  'National List',
               party: tds[0].text.tidy,
             }
-          }
+          end
         else
-          { 
-            name: tds[0].text.tidy,
+          {
+            name:     tds[0].text.tidy,
             wikiname: tds[0].xpath('.//a[not(@class="new")]/@title').text,
-            area: area,
-            party: tds[1].text.tidy,
-            type: tds[2].text.tidy,
+            area:     area,
+            party:    tds[1].text.tidy,
+            type:     tds[2].text.tidy,
           }
         end
       end
 
       data.flatten.each do |p|
-        entry = p.merge({ 
-          term: '2013',
-          source: url
-        })
+        entry = p.merge(term:   '2013',
+                        source: url)
         entry[:party] = 'Independent' if entry[:party].to_s.empty?
-        entry[:area].sub!(' Governorate','')
-        ScraperWiki.save_sqlite([:name, :area, :type], entry)
+        entry[:area].sub!(' Governorate', '')
+        ScraperWiki.save_sqlite(%i(name area type), entry)
       end
-
     end
-
   end
 end
 
