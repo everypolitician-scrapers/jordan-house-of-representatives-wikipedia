@@ -63,4 +63,5 @@ def scrape_list(url)
   end
 end
 
+ScraperWiki.sqliteexecute('DELETE FROM data') rescue nil
 scrape_list('https://en.wikipedia.org/wiki/Jordanian_parliamentary_election_results,_2013')
