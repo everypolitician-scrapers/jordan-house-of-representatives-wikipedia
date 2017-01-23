@@ -53,10 +53,9 @@ def scrape_list(url)
       end
 
       data.flatten.each do |p|
-        entry = p.merge(term:   '2013',
-                        source: url)
+        entry = p.merge(term: '2013', source: url)
         entry[:party] = 'Independent' if entry[:party].to_s.empty?
-        entry[:area].sub!(' Governorate', '')
+        entry[:area].sub!(' Governorate', '') if entry[:area].include? 'Governorate'
         ScraperWiki.save_sqlite(%i(name area type), entry)
       end
     end
