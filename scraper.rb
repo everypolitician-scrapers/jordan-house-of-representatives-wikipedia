@@ -56,6 +56,7 @@ def scrape_list(url)
         entry = p.merge(term: '2013', source: url)
         entry[:party] = 'Independent' if entry[:party].to_s.empty?
         entry[:area].sub!(' Governorate', '') if entry[:area].include? 'Governorate'
+        puts entry.reject { |_, v| v.to_s.empty? }.sort_by { |k, _| k }.to_h if ENV['MORPH_DEBUG']
         ScraperWiki.save_sqlite(%i(name area type), entry)
       end
     end
