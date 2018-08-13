@@ -35,7 +35,7 @@ def scrape_list(url)
         elsif area == 'National List'
           tds[2].text.split(/,\s*/).map do |name|
             {
-              name:  name,
+              name:  name.tidy,
               area:  'National List',
               type:  'National List',
               party: tds[0].text.tidy,
